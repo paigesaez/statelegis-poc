@@ -42,6 +42,7 @@ function App() {
       setLoading(true);
       try {
         const sessionList = await client.getSessionList(state);
+        console.log('Fetched sessionList:', sessionList);
         setSessions(sessionList);
         setSession(sessionList[0]?.session_id?.toString() || "");
       } catch (err) {
@@ -65,6 +66,7 @@ function App() {
       // If searching by keyword, use getSearch
       if (query) {
         const results = await client.getSearch(query, { state });
+        console.log('Fetched search results:', results);
         setBills(results);
         setPage(1);
         setLoading(false);
@@ -83,6 +85,7 @@ function App() {
       }
       // If not cached or cache expired, fetch from API
       const data = await client.getMasterList({ state, id: session });
+      console.log('Fetched bills from getMasterList:', data);
       localStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: Date.now() }));
       setBills(data);
     } catch (err) {
