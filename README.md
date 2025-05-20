@@ -72,3 +72,5 @@ You can customize mock responses in `src/mocks/handlers.ts` as needed for your U
 ## LegiScan API Usage
 
 This app uses the [`
+
+> **Note:** After connecting your repository to Vercel and v0, make sure to push a commit to GitHub to trigger the first deployment. Vercel deploys automatically on every push to the connected branch.
