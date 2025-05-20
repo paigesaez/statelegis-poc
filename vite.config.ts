@@ -12,5 +12,13 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
+    rollupOptions: {
+      // Ensure proper handling of JSON imports
+      onwarn(warning, warn) {
+        // Ignore certain warnings
+        if (warning.code === "CIRCULAR_DEPENDENCY") return
+        warn(warning)
+      },
+    },
   },
 })

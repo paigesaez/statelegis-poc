@@ -1,11 +1,8 @@
-import type React from "react"
 import { Link } from "react-router-dom"
 
-interface MainNavProps extends React.HTMLAttributes<HTMLElement> {}
-
-export default function MainNav({ className, ...props }: MainNavProps) {
+export default function MainNav() {
   return (
-    <nav className={`flex items-center space-x-4 lg:space-x-6 ${className}`} {...props}>
+    <nav className="flex items-center space-x-4 lg:space-x-6">
       <Link to="/" className="text-lg font-medium transition-colors hover:text-primary">
         StateLegis
       </Link>
