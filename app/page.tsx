@@ -1,5 +1,6 @@
 import { SearchBar } from "@/components/search-bar"
 import { RecentSessions } from "@/components/recent-sessions"
+import { LegiScanApiStatus } from "@/components/legiscan-api-status"
 
 export default function Home() {
   return (
@@ -13,6 +14,10 @@ export default function Home() {
 
       <section className="mx-auto max-w-3xl">
         <SearchBar />
+      </section>
+
+      <section className="mx-auto max-w-3xl">
+        <LegiScanApiStatus />
       </section>
 
       <section className="space-y-4">
