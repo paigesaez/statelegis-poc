@@ -4,9 +4,12 @@ A proof-of-concept React + Vite web app that fetches and displays legislative bi
 
 ## Features
 
-- Search and display California legislative bills
-- Filter bills by title
+- Search and display legislative bills by keyword, state, and session
+- Filter bills by title or keyword
 - View bill number, title, and status
+- Pagination for large bill lists
+- Caching to reduce API calls and improve performance
+- Click any bill to view detailed information (status, sponsors, last action, summary, full text)
 
 ## Setup
 
@@ -26,6 +29,13 @@ A proof-of-concept React + Vite web app that fetches and displays legislative bi
    npm run dev
    ```
    Open [http://localhost:5173/](http://localhost:5173/) in your browser.
+
+## Usage
+
+- Use the dropdowns to select a state and session.
+- Enter a keyword to search for bills (uses LegiScan's `getSearch` API).
+- Browse paginated results and click any bill to view more details in a modal.
+- The app caches bill lists for 10 minutes to reduce API calls and improve performance.
 
 ## LegiScan API Usage
 
