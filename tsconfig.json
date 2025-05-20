@@ -12,8 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": false,
-    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "plugins": [
       {
         "name": "next"
