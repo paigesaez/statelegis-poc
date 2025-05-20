@@ -1,28 +1,43 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-const states = [
-  { value: "all", label: "All States" },
-  { value: "ca", label: "California" },
-  { value: "ny", label: "New York" },
-  { value: "tx", label: "Texas" },
-  { value: "fl", label: "Florida" },
-  { value: "il", label: "Illinois" },
-  // Add more states as needed
-]
+import { getStates } from "@/lib/data-service"
+import type { State } from "@/lib/data-service"
 
 export function SearchBar() {
   const router = useRouter()
   const [keyword, setKeyword] = useState("")
   const [state, setState] = useState("all")
+  const [states, setStates] = useState<State[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadStates() {
+      try {
+        const statesData = await getStates()
+        setStates(statesData)
+      } catch (error) {
+        console.error("Error loading states:", error)
+        // Fallback to a minimal set of states
+        setStates([
+          { value: "all", label: "All States" },
+          { value: "ca", label: "California" },
+          { value: "ny", label: "New York" },
+          { value: "tx", label: "Texas" },
+        ])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadStates()
+  }, [])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,9 +54,9 @@ export function SearchBar() {
           className="w-full"
         />
       </div>
-      <Select value={state} onValueChange={setState}>
+      <Select value={state} onValueChange={setState} disabled={isLoading}>
         <SelectTrigger className="w-full md:w-[180px]">
-          <SelectValue placeholder="Select state" />
+          <SelectValue placeholder={isLoading ? "Loading..." : "Select state"} />
         </SelectTrigger>
         <SelectContent>
           {states.map((state) => (

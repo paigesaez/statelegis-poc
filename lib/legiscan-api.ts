@@ -1,29 +1,31 @@
-// LegiScan API service
+// LegiScan API service using our server-side API route
 
-const API_KEY = process.env.VITE_LEGISCAN_API_KEY
+import { get } from "./api-client"
 
-export async function getApiUrl(operation: string, params: Record<string, string> = {}) {
-  const baseUrl = "https://api.legiscan.com/"
-  const queryParams = new URLSearchParams({ key: API_KEY || "", op: operation, ...params })
-  return `${baseUrl}?${queryParams.toString()}`
+export interface LegiScanResponse<T> {
+  status: string
+  data?: T
+  alert?: string
 }
 
-export async function fetchFromLegiScan(operation: string, params: Record<string, string> = {}) {
+export async function fetchFromLegiScan<T>(operation: string, params: Record<string, string> = {}): Promise<T> {
   try {
-    const url = await getApiUrl(operation, params)
-    const response = await fetch(url)
+    // Build query parameters
+    const queryParams = new URLSearchParams({ op: operation, ...params })
+    const url = `/api/legiscan?${queryParams.toString()}`
 
-    if (!response.ok) {
-      throw new Error(`LegiScan API error: ${response.status} ${response.statusText}`)
+    // Use our safe API client
+    const response = await get<LegiScanResponse<T>>(url)
+
+    if (response.status === "ERROR") {
+      throw new Error(`LegiScan API error: ${response.alert || "Unknown error"}`)
     }
 
-    const data = await response.json()
-
-    if (data.status === "ERROR") {
-      throw new Error(`LegiScan API error: ${data.alert}`)
+    if (!response.data) {
+      throw new Error("LegiScan API returned no data")
     }
 
-    return data
+    return response.data
   } catch (error) {
     console.error("Error fetching from LegiScan:", error)
     throw error

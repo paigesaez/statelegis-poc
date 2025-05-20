@@ -18,6 +18,9 @@ const nextConfig = {
       },
     ],
   },
+  env: {
+    VITE_LEGISCAN_API_KEY: process.env.VITE_LEGISCAN_API_KEY,
+  },
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ['lucide-react'],

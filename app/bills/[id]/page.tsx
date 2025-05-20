@@ -5,47 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ChevronLeft, FileText, Users } from "lucide-react"
+import { getBillById } from "@/lib/data-service"
 
-// Mock data for bill details
-const mockBills = [
-  {
-    id: "ca-sb1",
-    number: "SB 1",
-    title: "California Environmental Quality Act: housing and land use",
-    state: "California",
-    status: "Passed",
-    lastAction: "Signed by Governor",
-    lastActionDate: "2023-10-10",
-    sponsors: [{ id: "ca-sen-wiener", name: "Senator Scott Wiener", party: "Democratic", district: "11" }],
-    summary:
-      "This bill would make various changes to the California Environmental Quality Act (CEQA) to facilitate the development of housing. It would exempt certain housing projects from CEQA review, streamline the CEQA process for housing projects, and limit the grounds upon which a court could invalidate a housing project's approval under CEQA.",
-    history: [
-      { date: "2022-12-05", action: "Introduced" },
-      { date: "2023-01-12", action: "Referred to Committee on Environmental Quality" },
-      { date: "2023-03-15", action: "Passed Committee (5-2)" },
-      { date: "2023-04-20", action: "Passed Senate (28-12)" },
-      { date: "2023-05-18", action: "Referred to Assembly Committee on Natural Resources" },
-      { date: "2023-06-22", action: "Passed Committee (7-3)" },
-      { date: "2023-07-15", action: "Passed Assembly (54-19)" },
-      { date: "2023-07-20", action: "Returned to Senate" },
-      { date: "2023-08-01", action: "Senate concurred in Assembly amendments (27-13)" },
-      { date: "2023-08-10", action: "Enrolled and presented to Governor" },
-      { date: "2023-10-10", action: "Signed by Governor. Chapter 310, Statutes of 2023." },
-    ],
-    fullText:
-      'SECTION 1. The Legislature finds and declares all of the following:\n(a) California is experiencing a housing supply crisis, with housing demand far outstripping supply.\n(b) The California Environmental Quality Act (Division 13 (commencing with Section 21000) of the Public Resources Code) (CEQA) can be misused to impede the development of housing, including affordable housing.\n(c) It is the intent of the Legislature to streamline the CEQA process for housing projects while maintaining environmental protections.\n\nSECTION 2. Section 21080.XX is added to the Public Resources Code, to read:\n21080.XX. (a) This division does not apply to a housing development project that meets all of the following requirements:\n(1) The project is located on an infill site.\n(2) The project is located in an urbanized area.\n(3) The project consists of at least 50 percent residential use.\n(4) The project includes at least 10 percent affordable housing units.\n(b) For purposes of this section, the following definitions apply:\n(1) "Affordable housing unit" means a unit that is made available at an affordable rent, as defined in Section 50053 of the Health and Safety Code, to a household earning no more than 80 percent of the area median income.\n(2) "Infill site" means a site that meets the criteria specified in Section 21061.3.\n(3) "Urbanized area" means an area that meets the criteria specified in Section 21071.',
-    committees: [
-      "Senate Committee on Environmental Quality",
-      "Senate Committee on Housing",
-      "Assembly Committee on Natural Resources",
-      "Assembly Committee on Housing and Community Development",
-    ],
-  },
-  // Add more mock bills as needed
-]
-
-export default function BillDetailPage({ params }: { params: { id: string } }) {
-  const bill = mockBills.find((b) => b.id === params.id)
+export default async function BillDetailPage({ params }: { params: { id: string } }) {
+  const bill = await getBillById(params.id)
 
   if (!bill) {
     notFound()
@@ -90,13 +53,13 @@ export default function BillDetailPage({ params }: { params: { id: string } }) {
 
               <div>
                 <h3 className="font-medium">Summary</h3>
-                <p className="mt-1 text-muted-foreground">{bill.summary}</p>
+                <p className="mt-1 text-muted-foreground">{bill.description}</p>
               </div>
 
               <div>
                 <h3 className="font-medium">Last Action</h3>
                 <p className="mt-1 text-muted-foreground">
-                  {bill.lastAction} ({new Date(bill.lastActionDate).toLocaleDateString()})
+                  {bill.last_action} ({new Date(bill.last_action_date).toLocaleDateString()})
                 </p>
               </div>
 
@@ -122,7 +85,7 @@ export default function BillDetailPage({ params }: { params: { id: string } }) {
 
                 <TabsContent value="text">
                   <div className="mt-4 rounded-md border p-4">
-                    <pre className="whitespace-pre-wrap text-sm">{bill.fullText}</pre>
+                    <pre className="whitespace-pre-wrap text-sm">{bill.full_text || "Full text not available"}</pre>
                   </div>
                 </TabsContent>
 

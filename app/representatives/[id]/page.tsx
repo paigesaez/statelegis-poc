@@ -7,68 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BillCard } from "@/components/bill-card"
 import { ChevronLeft, Mail, MapPin, Phone } from "lucide-react"
+import { getRepresentativeById } from "@/lib/data-service"
 
-// Mock data for representative details
-const mockRepresentatives = [
-  {
-    id: "ca-sen-wiener",
-    name: "Scott Wiener",
-    state: "California",
-    district: "11",
-    party: "Democratic",
-    active: true,
-    imageUrl: "/placeholder.svg?height=200&width=200",
-    bio: "Scott Wiener is a California State Senator representing District 11, which includes San Francisco and parts of San Mateo County. He chairs the Housing Committee and focuses on housing, transportation, civil rights, criminal justice reform, and environmental issues. Before being elected to the Senate in 2016, Wiener served as a member of the San Francisco Board of Supervisors, representing District 8. He is known for his work on housing legislation, including SB 35, which streamlines housing approvals in cities that have fallen behind on their housing goals.",
-    committees: [
-      "Chair, Housing Committee",
-      "Member, Environmental Quality Committee",
-      "Member, Judiciary Committee",
-      "Member, Transportation Committee",
-      "Member, Public Safety Committee",
-    ],
-    contact: {
-      email: "senator.wiener@senate.ca.gov",
-      phone: "(415) 557-1300",
-      office: "State Capitol, Room 5100, Sacramento, CA 95814",
-    },
-    sponsoredBills: [
-      {
-        id: "ca-sb1",
-        number: "SB 1",
-        title: "California Environmental Quality Act: housing and land use",
-        state: "California",
-        status: "Passed",
-        lastAction: "Signed by Governor",
-        lastActionDate: "2023-10-10",
-        sponsors: ["Senator Scott Wiener"],
-      },
-      {
-        id: "ca-sb10",
-        number: "SB 10",
-        title: "Planning and zoning: housing development: density",
-        state: "California",
-        status: "Passed",
-        lastAction: "Signed by Governor",
-        lastActionDate: "2021-09-16",
-        sponsors: ["Senator Scott Wiener"],
-      },
-      {
-        id: "ca-sb35",
-        number: "SB 35",
-        title: "Planning and zoning: affordable housing: streamlined approval process",
-        state: "California",
-        status: "Passed",
-        lastAction: "Signed by Governor",
-        lastActionDate: "2017-09-29",
-        sponsors: ["Senator Scott Wiener"],
-      },
-    ],
-  },
-  // Add more mock representatives as needed
-]
-
-export default function RepresentativeDetailPage({ params }: { params: { id: string } }) {
-  const representative = mockRepresentatives.find((r) => r.id === params.id)
+export default async function RepresentativeDetailPage({ params }: { params: { id: string } }) {
+  const representative = await getRepresentativeById(params.id)
 
   if (!representative) {
     notFound()

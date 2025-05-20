@@ -1,5 +1,6 @@
 "use client"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -8,16 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Filter } from "lucide-react"
-
-const states = [
-  { value: "all", label: "All States" },
-  { value: "ca", label: "California" },
-  { value: "ny", label: "New York" },
-  { value: "tx", label: "Texas" },
-  { value: "fl", label: "Florida" },
-  { value: "il", label: "Illinois" },
-  // Add more states as needed
-]
+import { getStates } from "@/lib/data-service"
+import type { State } from "@/lib/data-service"
 
 const parties = [
   { value: "all", label: "All Parties" },
@@ -35,6 +28,30 @@ const FormSchema = z.object({
 export function RepresentativesFilter() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [states, setStates] = useState<State[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadStates() {
+      try {
+        const statesData = await getStates()
+        setStates(statesData)
+      } catch (error) {
+        console.error("Error loading states:", error)
+        // Fallback to a minimal set of states
+        setStates([
+          { value: "all", label: "All States" },
+          { value: "ca", label: "California" },
+          { value: "ny", label: "New York" },
+          { value: "tx", label: "Texas" },
+        ])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadStates()
+  }, [])
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -65,10 +82,10 @@ export function RepresentativesFilter() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>State</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select state" />
+                      <SelectValue placeholder={isLoading ? "Loading..." : "Select state"} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>

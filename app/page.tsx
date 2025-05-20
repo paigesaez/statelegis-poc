@@ -1,6 +1,7 @@
 import { SearchBar } from "@/components/search-bar"
 import { RecentSessions } from "@/components/recent-sessions"
-import { LegiScanApiStatus } from "@/components/legiscan-api-status"
+import { MockDataNotice } from "@/components/mock-data-notice"
+import ErrorBoundary from "@/components/error-boundary"
 
 export default function Home() {
   return (
@@ -17,12 +18,14 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-3xl">
-        <LegiScanApiStatus />
+        <MockDataNotice />
       </section>
 
       <section className="space-y-4">
         <h2 className="text-2xl font-bold tracking-tighter">Recent Legislative Sessions</h2>
-        <RecentSessions />
+        <ErrorBoundary>
+          <RecentSessions />
+        </ErrorBoundary>
       </section>
 
       <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
