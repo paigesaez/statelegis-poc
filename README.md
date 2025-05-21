@@ -10,6 +10,11 @@ A proof-of-concept React + Vite web app that fetches and displays legislative bi
 - Pagination for large bill lists
 - Caching to reduce API calls and improve performance
 - Click any bill to view detailed information (status, sponsors, last action, summary, full text)
+- Track bills using:
+  - Keywords with boolean operators (AND, OR, NOT)
+  - Topics (automatically categorized from bill content)
+  - Bill sponsors and committees
+  - Receive notifications for matching bills and updates
 
 ## Setup
 
