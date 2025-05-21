@@ -1,13 +1,8 @@
 {
   "folders": [
-    {
-      "name": "frontend",
-      "path": "."
-    },
-    {
-      "name": "api",
-      "path": "api"
-    }
+    { "name": "clean",    "path": "."       },
+    { "name": "api",      "path": "api"     },
+    { "name": "legacy",   "path": "../statelegis-legacy" }
   ],
   "settings": {}
 }
