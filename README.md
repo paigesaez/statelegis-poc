@@ -19,17 +19,47 @@ A proof-of-concept React + Vite web app that fetches and displays legislative bi
    npm install msw --save-dev
    ```
 
-2. **Add your LegiScan API key:**
-   - Create a `.env` file in the project root:
+2. **Configure Environment Variables:**
+   - Create a `.env` file in the project root with the following variables:
      ```
+     # LegiScan API Configuration
      VITE_LEGISCAN_API_KEY=your_legiscan_api_key_here
+     VITE_LEGISCAN_API_BASE_URL=https://api.legiscan.com
+     
+     # Cache Configuration
+     # Duration in minutes for cached data to remain valid
+     VITE_CACHE_DURATION_MINUTES=10
+     # Maximum number of items to keep in cache
+     VITE_CACHE_MAX_ITEMS=100
+     
+     # Rate Limiting
+     # Maximum number of API requests per window
+     VITE_API_REQUEST_LIMIT=100
+     # Duration of rate limiting window in minutes
+     VITE_API_REQUEST_WINDOW_MINUTES=60
+     
+     # Optional: Override default API timeout (in milliseconds)
+     VITE_API_TIMEOUT=10000
      ```
+
+   - **Cache Strategy:**
+     - API responses are cached for `VITE_CACHE_DURATION_MINUTES` minutes
+     - Cache size is limited to `VITE_CACHE_MAX_ITEMS` entries
+     - Cache is automatically invalidated when responses change
+     - Cache keys are based on the API operation and parameters
+
+   - **Rate Limiting:**
+     - API requests are rate-limited to `VITE_API_REQUEST_LIMIT` requests per `VITE_API_REQUEST_WINDOW_MINUTES` minutes
+     - This helps prevent hitting LegiScan's API rate limits
+     - Requests will be automatically delayed if the limit is reached
+
+   - **Important:** Never commit your `.env` file to version control. Keep it secure and only share it with authorized team members.
 
 3. **Start the development server:**
    ```sh
    npm run dev
    ```
-   Open [http://localhost:5173/](http://localhost:5173/) in your browser.
+   Open [http://localhost:3000/](http://localhost:3000/) in your browser.
 
 ## Usage
 

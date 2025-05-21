@@ -25,14 +25,26 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-    // Log error to an error reporting service
-    console.error("Error caught by ErrorBoundary:", error, errorInfo)
-    this.setState({ errorInfo })
+    // Log error details with structured data
+    console.error("Error caught by ErrorBoundary:", {
+      error: {
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+      },
+      errorInfo,
+      timestamp: new Date().toISOString(),
+    })
 
-    // You could send this to a logging service in production
-    if (process.env.NODE_ENV === "production") {
-      // Example: sendToErrorReporting(error, errorInfo);
-    }
+    // Store error details in state
+    this.setState({ 
+      errorInfo,
+      error: {
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+      } as Error
+    })
   }
 
   render() {
