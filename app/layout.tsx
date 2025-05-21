@@ -4,6 +4,7 @@ import "./globals.css"
 import type { Metadata } from "next"
 import { MainNav } from "@/components/main-nav"
 import { MobileNav } from "@/components/mobile-nav"
+import Link from "next/link"
 import ErrorBoundary from "@/components/error-boundary"
 
 // Remove the next/font import and use system fonts instead
@@ -28,9 +29,12 @@ export default function RootLayout({
             <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <div className="container flex h-16 items-center">
                 <MainNav />
-                <div className="flex flex-1 items-center justify-end">
+                <nav className="flex items-center space-x-4 lg:space-x-6">
+                  <Link href="/tracking" className="text-sm font-medium transition-colors hover:text-primary">
+                    Bill Tracking
+                  </Link>
                   <MobileNav />
-                </div>
+                </nav>
               </div>
             </header>
             <main className="flex-1">
