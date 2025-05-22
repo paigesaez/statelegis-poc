@@ -1,56 +1,169 @@
-// LegiScan API service using our server-side API route
+import { get } from './api-client'
 
-import { get } from "./api-client"
+const LEGISCAN_BASE_URL = 'https://api.legiscan.com'
 
-export interface LegiScanResponse<T> {
-  status: string
-  data?: T
-  alert?: string
-}
-
-export async function fetchFromLegiScan<T>(operation: string, params: Record<string, string> = {}): Promise<T> {
+/**
+ * Fetches data from the LegiScan API
+ * @param operation The LegiScan API operation to perform
+ * @param params Additional query parameters
+ * @returns Promise with the API response data
+ */
+export async function fetchFromLegiScan<T>(
+  operation: string,
+  params: Record<string, string | number> = {}
+): Promise<T> {
   try {
-    // Build query parameters
-    const queryParams = new URLSearchParams({ op: operation, ...params })
-    const url = `/api/legiscan?${queryParams.toString()}`
+    // Add the API key and operation to the query parameters
+    const queryParams = new URLSearchParams({
+      key: process.env.VITE_LEGISCAN_API_KEY || '',
+      op: operation,
+      ...Object.fromEntries(
+        Object.entries(params).map(([key, value]) => [key, String(value)])
+      ),
+    })
 
-    // Use our safe API client
-    const response = await get<LegiScanResponse<T>>(url)
+    const response = await get<{ status: string; [key: string]: any }>(
+      `${LEGISCAN_BASE_URL}/?${queryParams.toString()}`
+    )
 
-    if (response.status === "ERROR") {
-      throw new Error(`LegiScan API error: ${response.alert || "Unknown error"}`)
+    // Check for API errors
+    if (response.status !== 'OK') {
+      throw new Error(`LegiScan API error: ${response.status}`)
     }
 
-    if (!response.data) {
-      throw new Error("LegiScan API returned no data")
-    }
-
-    return response.data
+    // The actual data is in a property named after the operation
+    return response[operation.toLowerCase()] as T
   } catch (error) {
-    console.error("Error fetching from LegiScan:", error)
+    console.error('Error in fetchFromLegiScan:', error)
     throw error
   }
 }
 
-// Example functions for different API operations
+/**
+ * Fetches session list for a state
+ * @param state State abbreviation (e.g., 'CA')
+ */
 export async function getSessionList(state: string) {
-  return fetchFromLegiScan("getSessionList", { state })
+  return fetchFromLegiScan<Array<{
+    session_id: number
+    state_id: string
+    state: string
+    name: string
+    title: string
+    year_start: number
+    year_end: number
+    special: number
+    session_tag: string
+    status: string
+  }>>('getSessionList', { state })
 }
 
-export async function getBillList(sessionId: string) {
-  return fetchFromLegiScan("getBillList", { id: sessionId })
+/**
+ * Fetches bill details by ID
+ * @param id Bill ID
+ */
+export async function getBill(id: number | string) {
+  const response = await fetchFromLegiScan<{ bill: any }>('getBill', { id })
+  return response.bill
 }
 
-export async function getBill(billId: string) {
-  return fetchFromLegiScan("getBill", { id: billId })
+/**
+ * Fetches bill text by document ID
+ * @param id Document ID
+ */
+export async function getBillText(id: number | string) {
+  const response = await fetchFromLegiScan<{ text: any }>('getBillText', { id })
+  return response.text
 }
 
-export async function getPersonDetail(peopleId: string) {
-  return fetchFromLegiScan("getPerson", { id: peopleId })
+/**
+ * Fetches bill amendments
+ * @param id Bill ID
+ */
+export async function getAmendment(id: number | string) {
+  const response = await fetchFromLegiScan<{ amendment: any }>('getAmendment', { id })
+  return response.amendment
 }
 
-export async function searchBills(state: string, query: string, year?: number) {
-  const params: Record<string, string> = { state, query }
-  if (year) params.year = year.toString()
-  return fetchFromLegiScan("searchBills", params)
+/**
+ * Fetches bill supplements
+ * @param id Bill ID
+ */
+export async function getSupplement(id: number | string) {
+  const response = await fetchFromLegiScan<{ supplement: any }>('getSupplement', { id })
+  return response.supplement
+}
+
+/**
+ * Fetches bill sponsors
+ * @param id Bill ID
+ */
+export async function getSponsors(id: number | string) {
+  const response = await fetchFromLegiScan<{ sponsors: any[] }>('getSponsors', { id })
+  return response.sponsors
+}
+
+/**
+ * Fetches bill votes
+ * @param id Bill ID
+ */
+export async function getVotes(id: number | string) {
+  const response = await fetchFromLegiScan<{ votes: any }>('getVotes', { id })
+  return response.votes
+}
+
+/**
+ * Fetches bill text by document ID
+ * @param id Document ID
+ */
+export async function getText(id: number | string) {
+  const response = await fetchFromLegiScan<{ text: any }>('getText', { id })
+  return response.text
+}
+
+/**
+ * Fetches bill subjects by ID
+ * @param id Bill ID
+ */
+export async function getSubjects(id: number | string) {
+  const response = await fetchFromLegiScan<{ subjects: any[] }>('getSubjects', { id })
+  return response.subjects
+}
+
+/**
+ * Searches for bills
+ * @param query Search query
+ * @param state State abbreviation (e.g., 'CA')
+ * @param year Session year
+ * @param page Page number
+ */
+export async function searchBills(
+  query: string,
+  state?: string,
+  year?: number,
+  page = 1
+) {
+  const params: Record<string, string | number> = { query, page }
+  if (state) params.state = state
+  if (year) params.year = year
+  
+  const response = await fetchFromLegiScan<{
+    searchresult: {
+      summary: any
+      results: Array<{
+        relevance: number
+        bill: any
+      }>
+    }
+  }>('search', params)
+  
+  return response.searchresult
+}
+
+/**
+ * Fetches master list of states
+ */
+export async function getStateList() {
+  const response = await fetchFromLegiScan<{ states: any }>('getStateList')
+  return response.states
 }

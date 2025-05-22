@@ -2,7 +2,7 @@
   "folders": [
     {
       "name": "frontend",
-      "path": "app"
+      "path": "."
     },
     {
       "name": "api",
@@ -11,7 +11,8 @@
     {
       "name": "legacy",
       "path": "../statelegis-legacy"
-    }
+    },
+    // Add more folders here as needed.
   ],
   "settings": {}
 }
